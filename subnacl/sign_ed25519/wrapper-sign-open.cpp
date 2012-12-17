@@ -8,11 +8,10 @@ string crypto_sign_open(const string &sm_string, const string &pk_string)
   size_t smlen = sm_string.size();
   unsigned char m[smlen];
   unsigned long long mlen;
-  for (int i = 0;i < smlen;++i) m[i] = sm_string[i];
   if (crypto_sign_open(
         m,
         &mlen,
-        m,
+        (const unsigned char *) sm_string.c_str(),
         smlen,
         (const unsigned char *) pk_string.c_str()
         ) != 0)

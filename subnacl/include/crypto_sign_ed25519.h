@@ -11,6 +11,7 @@
 extern std::string crypto_sign_ed25519(const std::string &,const std::string &);
 extern std::string crypto_sign_ed25519_open(const std::string &,const std::string &);
 extern std::string crypto_sign_ed25519_keypair(std::string *);
+extern std::string crypto_sign_ed25519_publickey(const std::string &, std::string *);
 
 extern "C" {
 #endif
@@ -18,6 +19,7 @@ extern "C" {
 extern int crypto_sign_ed25519(unsigned char *,unsigned long long *,const unsigned char *,unsigned long long,const unsigned char *);
 extern int crypto_sign_ed25519_open(unsigned char *,unsigned long long *,const unsigned char *,unsigned long long,const unsigned char *);
 extern int crypto_sign_ed25519_keypair(unsigned char *,unsigned char *);
+extern int crypto_sign_ed25519_publickey(unsigned char *,unsigned char *,unsigned char *);
 
 #ifdef __cplusplus
 }

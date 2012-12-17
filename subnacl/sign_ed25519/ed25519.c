@@ -18,6 +18,33 @@ static void get_hram(unsigned char *hram, const unsigned char *sm, const unsigne
 }
 
 
+int crypto_sign_ed25519_publickey(
+    unsigned char *seed,
+    unsigned char *pk,
+    unsigned char *sk
+    )
+{
+  sc25519 scsk;
+  ge25519 gepk;
+  unsigned char extsk[64];
+  int i;
+
+  for(i=0;i<32;i++)
+    sk[i] = seed[i];
+  crypto_hash_sha512(extsk, sk, 32);
+  extsk[0] &= 248;
+  extsk[31] &= 127;
+  extsk[31] |= 64;
+
+  sc25519_from32bytes(&scsk,extsk);
+  
+  ge25519_scalarmult_base(&gepk, &scsk);
+  ge25519_pack(pk, &gepk);
+  for(i=0;i<32;i++)
+    sk[32 + i] = pk[i];
+  return 0;
+}
+
 int crypto_sign_ed25519_keypair(
     unsigned char *pk,
     unsigned char *sk

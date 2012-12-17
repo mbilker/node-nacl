@@ -21,6 +21,7 @@
                 # created with
                 #  python import.py
                 #  find subnacl -type f -name '*.c' -or -name '*.cpp'|perl -ne 's/\s+$//; print "                \"$_\",\n";'
+
                 "subnacl/auth_hmacsha256/hmac.c",
                 "subnacl/auth_hmacsha256/verify.c",
                 "subnacl/auth_hmacsha512256/hmac.c",
@@ -59,6 +60,7 @@
                 "subnacl/sign_ed25519/ge25519.c",
                 "subnacl/sign_ed25519/sc25519.c",
                 "subnacl/sign_ed25519/wrapper-keypair.cpp",
+                "subnacl/sign_ed25519/wrapper-publickey.cpp",
                 "subnacl/sign_ed25519/wrapper-sign-open.cpp",
                 "subnacl/sign_ed25519/wrapper-sign.cpp",
                 "subnacl/stream_aes128ctr/afternm.c",
@@ -80,6 +82,7 @@
                 "subnacl/stream_xsalsa20/xor.c",
                 "subnacl/verify_16/verify.c",
                 "subnacl/verify_32/verify.c",
+
                 ],
         }
     ]

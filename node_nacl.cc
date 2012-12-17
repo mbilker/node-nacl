@@ -120,6 +120,18 @@ static Handle<Value> node_crypto_sign_keypair (const Arguments& args) {
   return scope.Close(res);
 }
 
+static Handle<Value> node_crypto_sign_publickey (const Arguments& args) {
+  HandleScope scope;
+  string seed = buf_to_str(args[0]->ToObject());
+  string sk;
+  Buffer* pk_buf = str_to_buf(crypto_sign_publickey(seed, &sk));
+  Buffer* sk_buf = str_to_buf(sk);
+  Local<Array> res = Array::New(2);
+  res->Set(0, pk_buf->handle_);
+  res->Set(1, sk_buf->handle_);
+  return scope.Close(res);
+}
+
 static Handle<Value> node_crypto_secretbox (const Arguments& args) {
   HandleScope scope;
   string m = buf_to_str(args[0]->ToObject());
@@ -209,6 +221,7 @@ extern "C" {
     NODE_SET_METHOD(target, "sign", node_crypto_sign);
     NODE_SET_METHOD(target, "sign_open", node_crypto_sign_open);
     NODE_SET_METHOD(target, "sign_keypair", node_crypto_sign_keypair);
+    NODE_SET_METHOD(target, "sign_publickey", node_crypto_sign_publickey);
 
     NODE_SET_METHOD(target, "secretbox", node_crypto_secretbox);
     NODE_SET_METHOD(target, "secretbox_open", node_crypto_secretbox_open);

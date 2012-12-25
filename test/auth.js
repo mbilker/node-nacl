@@ -115,32 +115,30 @@ test("auth RFC 4321", function(t) {
     t.end();
 });
 
-function shouldFail(t, a, m, k) {
-    try {
-        n.auth_verify(a, m, k);
-        t.fail("forgery");
-    } catch (e) {
-        t.equal(e.message, "invalid authenticator");
-    }
-}
-
 test("auth basic", function(t) {
     var key = padKey("00010203");
     var msg = Buffer("Hello World");
     var a = n.auth(msg, key);
     n.auth_verify(a, msg, key);
-    shouldFail(t, a, Buffer.concat([msg, Buffer("extra")]), key);
+    t.throws(function() {n.auth_verify(a,
+                                       Buffer.concat([msg, Buffer("extra")]),
+                                       key);},
+             {name: "Error", message: "invalid authenticator"});
+
     var not_a = Buffer(a);
     not_a.writeUInt8((1+a.readUInt8(0))%256, 0);
-    shouldFail(t, not_a, msg, key);
+    t.throws(function() {n.auth_verify(not_a, msg, key);},
+             {name: "Error", message: "invalid authenticator"});
 
     var not_msg = Buffer(msg);
     not_msg.writeUInt8((1+msg.readUInt8(0))%256, 0);
-    shouldFail(t, a, not_msg, key);
+    t.throws(function() {n.auth_verify(a, not_msg, key);},
+             {name: "Error", message: "invalid authenticator"});
 
     var not_key = Buffer(key);
     not_key.writeUInt8((1+key.readUInt8(0))%256, 0);
-    shouldFail(t, a, msg, not_key);
+    t.throws(function() {n.auth_verify(a, msg, not_key);},
+             {name: "Error", message: "invalid authenticator"});
 
     t.end();
 });

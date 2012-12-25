@@ -8,6 +8,7 @@
 #include <crypto_sign.h>
 #include <crypto_secretbox.h>
 #include <crypto_onetimeauth.h>
+#include <crypto_auth.h>
 #include <crypto_stream.h>
 
 using namespace std;
@@ -27,6 +28,9 @@ static Handle<Value> node_crypto_secretbox_open (const Arguments&);
 
 static Handle<Value> node_crypto_onetimeauth (const Arguments&);
 static Handle<Value> node_crypto_onetimeauth_verify (const Arguments&);
+
+static Handle<Value> node_crypto_auth (const Arguments&);
+static Handle<Value> node_crypto_auth_verify (const Arguments&);
 
 static Handle<Value> node_crypto_stream (const Arguments&);
 static Handle<Value> node_crypto_stream_xor (const Arguments&);
@@ -183,6 +187,31 @@ static Handle<Value> node_crypto_onetimeauth_verify (const Arguments& args) {
   }
 }
 
+static Handle<Value> node_crypto_auth (const Arguments& args) {
+  HandleScope scope;
+  string m = buf_to_str(args[0]->ToObject());
+  string k = buf_to_str(args[1]->ToObject());
+  try {
+    string a = crypto_auth(m,k);
+    return scope.Close(str_to_buf(a)->handle_);
+  } catch(char const *err) {
+    return THROW_ERROR(err);
+  }
+}
+
+static Handle<Value> node_crypto_auth_verify (const Arguments& args) {
+  HandleScope scope;
+  string a = buf_to_str(args[0]->ToObject());
+  string m = buf_to_str(args[1]->ToObject());
+  string k = buf_to_str(args[2]->ToObject());
+  try {
+    crypto_auth_verify(a,m,k);
+    return scope.Close(Null());
+  } catch(char const *err) {
+    return THROW_ERROR(err);
+  }
+}
+
 static Handle<Value> node_crypto_stream (const Arguments& args) {
   HandleScope scope;
   size_t clen = args[0]->IntegerValue();
@@ -228,6 +257,9 @@ extern "C" {
 
     NODE_SET_METHOD(target, "onetimeauth", node_crypto_onetimeauth);
     NODE_SET_METHOD(target, "onetimeauth_verify", node_crypto_onetimeauth_verify);
+
+    NODE_SET_METHOD(target, "auth", node_crypto_auth);
+    NODE_SET_METHOD(target, "auth_verify", node_crypto_auth_verify);
 
     NODE_SET_METHOD(target, "stream", node_crypto_stream);
     NODE_SET_METHOD(target, "stream_xor", node_crypto_stream_xor);

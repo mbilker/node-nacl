@@ -140,5 +140,21 @@ test("auth basic", function(t) {
     t.throws(function() {n.auth_verify(a, msg, not_key);},
              {name: "Error", message: "invalid authenticator"});
 
+    // bad argument types
+    t.throws(function() {n.auth(msg, key, "extra");},
+             {name: "Error", message: "Args: message, key"});
+    t.throws(function() {n.auth(0, key);},
+             {name: "TypeError", message: "arg[0] 'message' must be a Buffer"});
+    t.throws(function() {n.auth(msg, 0);},
+             {name: "TypeError", message: "arg[1] 'key' must be a Buffer"});
+    t.throws(function() {n.auth_verify(a, msg, key, "extra");},
+             {name: "Error", message: "Args: authenticator, message, key"});
+    t.throws(function() {n.auth_verify(0, msg, key);},
+             {name: "TypeError", message: "arg[0] 'authenticator' must be a Buffer"});
+    t.throws(function() {n.auth_verify(a, 0, key);},
+             {name: "TypeError", message: "arg[1] 'message' must be a Buffer"});
+    t.throws(function() {n.auth_verify(a, msg, 0);},
+             {name: "TypeError", message: "arg[2] 'key' must be a Buffer"});
+
     t.end();
 });

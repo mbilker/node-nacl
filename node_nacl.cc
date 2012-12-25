@@ -36,6 +36,23 @@ static Handle<Value> node_crypto_stream (const Arguments&);
 static Handle<Value> node_crypto_stream_xor (const Arguments&);
 
 
+#define LEAVE_VIA_EXCEPTION(msg) \
+ return ThrowException(Exception::Error(String::New(msg)));
+
+#define LEAVE_VIA_CUSTOM_EXCEPTION(errorFunc, msg)      \
+  {  Local<Value> argv[] = {String::New(msg)};          \
+  Local<Value> Err = (errorFunc)->NewInstance(1, argv); \
+  return ThrowException(Err);  }
+
+#define BAIL_IF_NOT_N_ARGS(nargs,msg) \
+ if (args.Length() != nargs) \
+   LEAVE_VIA_EXCEPTION(msg);
+
+#define EXTRACT_BUFFER_ARG(arg, var, msg) \
+  if (!Buffer::HasInstance(arg)) \
+    return ThrowException(Exception::TypeError(String::New(msg " must be a Buffer"))); \
+  string var = buf_to_str(arg->ToObject()); \
+
 static string buf_to_str (Handle<Object> b) {
   return string(Buffer::Data(b), Buffer::Length(b));
 }
@@ -189,8 +206,9 @@ static Handle<Value> node_crypto_onetimeauth_verify (const Arguments& args) {
 
 static Handle<Value> node_crypto_auth (const Arguments& args) {
   HandleScope scope;
-  string m = buf_to_str(args[0]->ToObject());
-  string k = buf_to_str(args[1]->ToObject());
+  BAIL_IF_NOT_N_ARGS(2, "Args: message, key");
+  EXTRACT_BUFFER_ARG(args[0], m, "arg[0] 'message'");
+  EXTRACT_BUFFER_ARG(args[1], k, "arg[1] 'key'");
   try {
     string a = crypto_auth(m,k);
     return scope.Close(str_to_buf(a)->handle_);
@@ -201,9 +219,10 @@ static Handle<Value> node_crypto_auth (const Arguments& args) {
 
 static Handle<Value> node_crypto_auth_verify (const Arguments& args) {
   HandleScope scope;
-  string a = buf_to_str(args[0]->ToObject());
-  string m = buf_to_str(args[1]->ToObject());
-  string k = buf_to_str(args[2]->ToObject());
+  BAIL_IF_NOT_N_ARGS(3, "Args: authenticator, message, key");
+  EXTRACT_BUFFER_ARG(args[0], a, "arg[0] 'authenticator'");
+  EXTRACT_BUFFER_ARG(args[1], m, "arg[1] 'message'");
+  EXTRACT_BUFFER_ARG(args[2], k, "arg[2] 'key'");
   try {
     crypto_auth_verify(a,m,k);
     return scope.Close(Null());

@@ -40,7 +40,7 @@ function one_test_line(t, line, lineno) {
 
 var katfile = module.filename.slice(0, module.filename.lastIndexOf("/")) + "/" + "kat-ed25519.txt";
 
-test("sign", function(t) {
+test("sign-KAT", function(t) {
          // kat-ed25519.txt comes from "sign.input" on ed25519.cr.yp.to . The
          // pure-python ed25519.py in the same distribution uses a very
          // different key format than the one used by NaCl.
@@ -53,3 +53,30 @@ test("sign", function(t) {
          t.end();
 });
 
+test("sign", function(t) {
+    var newkeys = nacl.sign_keypair();
+    var vk = newkeys[0];
+    var sk = newkeys[1];
+    var msg = Buffer("Hello World");
+    var sigmsg = nacl.sign(msg, sk);
+    nacl.sign_open(sigmsg, vk);
+    t.throws(function() {nacl.sign_open(Buffer.concat([Buffer([0]), sigmsg]),
+                                        vk);},
+             {name: "Error", message: "ciphertext fails verification"});
+
+    t.throws(function() {nacl.sign(msg, sk, "extra");},
+             {name: "Error", message: "Args: message, signingkey"});
+    t.throws(function() {nacl.sign(0, sk);},
+             {name: "TypeError", message: "arg[0] 'message' must be a Buffer"});
+    t.throws(function() {nacl.sign(msg, 0);},
+             {name: "TypeError", message: "arg[1] 'signingkey' must be a Buffer"});
+
+    t.throws(function() {nacl.sign_open(sigmsg, vk, "extra");},
+             {name: "Error", message: "Args: signedmessage, verifyingkey"});
+    t.throws(function() {nacl.sign_open(0, vk);},
+             {name: "TypeError", message: "arg[0] 'signedmessage' must be a Buffer"});
+    t.throws(function() {nacl.sign_open(sigmsg, 0);},
+             {name: "TypeError", message: "arg[1] 'verifyingkey' must be a Buffer"});
+
+    t.end();
+});

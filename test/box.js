@@ -49,6 +49,27 @@ test("box", function(t) {
     t.equivalent(n.box(msg, nonce, alice_pk, bob_sk), boxed);
     t.equivalent(n.box_open(boxed, nonce, bob_pk, alice_sk), msg);
 
+    // bad arguments
+    t.throws(function() {n.box(msg, nonce, alice_pk, bob_sk, "extra");},
+             {name: "Error", message: "Args: message, nonce, pubkey, privkey"});
+    t.throws(function() {n.box(0, nonce, alice_pk, bob_sk);},
+             {name: "TypeError", message: "arg[0] 'message' must be a Buffer"});
+    t.throws(function() {n.box(msg, 0, alice_pk, bob_sk);},
+             {name: "TypeError", message: "arg[1] 'nonce' must be a Buffer"});
+    t.throws(function() {n.box(msg, nonce, 0, bob_sk);},
+             {name: "TypeError", message: "arg[2] 'pubkey' must be a Buffer"});
+    t.throws(function() {n.box(msg, nonce, alice_pk, 0);},
+             {name: "TypeError", message: "arg[3] 'privkey' must be a Buffer"});
+    t.throws(function() {n.box_open(boxed, nonce, alice_pk, bob_sk, "extra");},
+             {name: "Error", message: "Args: ciphertext, nonce, pubkey, privkey"});
+    t.throws(function() {n.box_open(0, nonce, alice_pk, bob_sk);},
+             {name: "TypeError", message: "arg[0] 'ciphertext' must be a Buffer"});
+    t.throws(function() {n.box_open(boxed, 0, alice_pk, bob_sk);},
+             {name: "TypeError", message: "arg[1] 'nonce' must be a Buffer"});
+    t.throws(function() {n.box_open(boxed, nonce, 0, bob_sk);},
+             {name: "TypeError", message: "arg[2] 'pubkey' must be a Buffer"});
+    t.throws(function() {n.box_open(boxed, nonce, alice_pk, 0);},
+             {name: "TypeError", message: "arg[3] 'privkey' must be a Buffer"});
 
     // and keypair creation
     var alice = n.box_keypair(); // [0] is public key, [1] is private key

@@ -45,6 +45,25 @@ test("secretbox", function(t) {
                                            key); });
     t.throws(function() { n.secretbox_open(boxed, nonce,
                                            join([key.slice(0,-1), buf0])); });
+
+    t.throws(function() {n.secretbox(msg, nonce, key, "extra");},
+             {name: "Error", message: "Args: message, nonce, key"});
+    t.throws(function() {n.secretbox(0, nonce, key);},
+             {name: "TypeError", message: "arg[0] 'message' must be a Buffer"});
+    t.throws(function() {n.secretbox(msg, 0, key);},
+             {name: "TypeError", message: "arg[1] 'nonce' must be a Buffer"});
+    t.throws(function() {n.secretbox(msg, nonce, 0);},
+             {name: "TypeError", message: "arg[2] 'key' must be a Buffer"});
+
+    t.throws(function() {n.secretbox_open(boxed, nonce, key, "extra");},
+             {name: "Error", message: "Args: ciphertext, nonce, key"});
+    t.throws(function() {n.secretbox_open(0, nonce, key);},
+             {name: "TypeError", message: "arg[0] 'ciphertext' must be a Buffer"});
+    t.throws(function() {n.secretbox_open(boxed, 0, key);},
+             {name: "TypeError", message: "arg[1] 'nonce' must be a Buffer"});
+    t.throws(function() {n.secretbox_open(boxed, nonce, 0);},
+             {name: "TypeError", message: "arg[2] 'key' must be a Buffer"});
+
     t.end();
 });
 

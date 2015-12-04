@@ -5,7 +5,10 @@
     "targets": [
         {
             "target_name": "nacl",
-            "include_dirs": ["subnacl/include"],
+            "include_dirs": [
+              "<!(node -e \"require('nan')\")",
+              "subnacl/include"
+            ],
             # re-enable C++ exceptions (the "!" is the important bit)
             # https://github.com/TooTallNate/node-gyp/issues/17
             "cflags!": ["-fno-exceptions"],

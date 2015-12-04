@@ -8,6 +8,10 @@
     "type": "git",
     "url": "git://github.com/thejh/node-nacl.git"
   },
-  "dependencies": {},
-  "devDependencies": {"tap": ">=0.3.3"}
+  "dependencies": {
+    "nan": "^2.1.0"
+  },
+  "devDependencies": {
+    "tap": ">=0.3.3"
+  }
 }

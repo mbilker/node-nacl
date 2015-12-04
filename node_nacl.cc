@@ -19,7 +19,7 @@ NAN_METHOD(box_keypair);
 
 NAN_METHOD(sign);
 NAN_METHOD(sign_open);
-NAN_METHOD(sig_keypairn);
+NAN_METHOD(sign_keypair);
 
 NAN_METHOD(secretbox);
 NAN_METHOD(secretbox_open);
